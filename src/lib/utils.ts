@@ -1,4 +1,4 @@
-import { getAccessToken } from "@/modules/ci/utils";
+import { deleteAccessToken, getAccessToken } from "@/modules/ci/utils";
 import axios from "axios";
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
@@ -16,3 +16,12 @@ baseAPI.interceptors.request.use(req => {
   req.headers.Authorization = `Bearer ${getAccessToken()}`;
   return req
 })
+baseAPI.interceptors.response.use(function onFulfilled(response) {
+    return response;
+  }, function onRejected(error) {
+    if (error.status === 401) {
+      deleteAccessToken();
+      window.location.href = '/ci/sign-in'
+    }
+    return Promise.reject(error);
+  });

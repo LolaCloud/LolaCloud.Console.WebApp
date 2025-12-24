@@ -1,6 +1,7 @@
 import { baseAPI, type Nullable } from '@/lib/utils';
 import type { Operator } from './types/operator';
 import type { LolaPermissions } from './enums/permissions.enum';
+import type { Session } from './types/session';
 
 type AuthenticateProps = {
     username: string;
@@ -11,6 +12,14 @@ type AuthenticateResponse = {
 }
 export async function authenticate(payload: AuthenticateProps): Promise<AuthenticateResponse> {
     const response = await baseAPI.post('/v1/auth/sign-in', payload);
+    return response.data
+}
+
+type UpdatePasswordDTO = {
+    newPassword: string
+}
+export async function updateOperatorPassword(payload: UpdatePasswordDTO): Promise<void> {
+    const response = await baseAPI.post('/v1/auth/update-password', payload);
     return response.data
 }
 
@@ -62,5 +71,18 @@ export async function updateOperator(operatorId: string, payload: UpdateOperator
 
 export async function deleteOperator(operatorId: string): Promise<void> {
     const response = await baseAPI.delete('/v1/operator/' + operatorId)
+    return response.data;
+}
+
+type GetOperatorSessionsResponse = {
+    sessions: Session[]
+}
+export async function getOperatorSessions(): Promise<GetOperatorSessionsResponse> {
+    const response = await baseAPI.get('/v1/auth/sessions')
+    return response.data;
+}
+
+export async function disableOperatorSession(sessionId: string): Promise<void> {
+    const response = await baseAPI.delete('/v1/auth/session/' + sessionId)
     return response.data;
 }

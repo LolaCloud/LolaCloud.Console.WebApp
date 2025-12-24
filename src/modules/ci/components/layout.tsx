@@ -27,12 +27,12 @@ export function CILayout(
                                 pathChecker: p => p.startsWith('/ci/operator'),
                                 url: '/ci/operator'
                             },
-                            {
-                                icon: <FormIcon/>,
-                                label: 'Papéis',
-                                pathChecker: p => p.startsWith('/ci/role'),
-                                url: '/ci/role'
-                            },
+                            // {
+                            //     icon: <FormIcon/>,
+                            //     label: 'Papéis',
+                            //     pathChecker: p => p.startsWith('/ci/role'),
+                            //     url: '/ci/role'
+                            // },
                         ]
                     }]}
         >

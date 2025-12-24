@@ -3,6 +3,7 @@ import { CIRouter } from "./modules/ci/router";
 import { Toaster } from "./components/ui/sonner";
 import { getAccessToken } from "./modules/ci/utils";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { CIRouterProtector } from "./modules/ci/components/router-protector";
 
 export function App() {
 
@@ -15,8 +16,10 @@ export function App() {
     return (
         <QueryClientProvider client={queryClient}>
             <BrowserRouter>
-                <CIRouter />
-                <Toaster />
+                <CIRouterProtector>
+                    <CIRouter />
+                    <Toaster />
+                </CIRouterProtector>
             </BrowserRouter>
         </QueryClientProvider>
     )

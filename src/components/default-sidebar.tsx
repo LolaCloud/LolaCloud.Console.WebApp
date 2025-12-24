@@ -3,11 +3,12 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarHeader, SidebarInset, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarProvider, useSidebar } from "@/components/ui/sidebar";
 import { LogOutIcon, MoreVerticalIcon, UserIcon } from "lucide-react";
 import { Kbd, KbdGroup } from "./ui/kbd";
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { deleteAccessToken } from "@/modules/ci/utils";
 import { useOperator } from "@/modules/ci/store/operator.store";
+import { ProfileDialog } from "@/modules/ci/components/profile-dialog";
 
 export function DefaultSidebarHeader() {
     return (
@@ -41,9 +42,11 @@ export function DefaultSidebarFooter() {
 
     const { isMobile } = useSidebar();
     const { currentOperator } = useOperator()
+    const [openProfileDialog, setOpenProfileDialog] = useState<boolean>(false)
 
     return (
         <SidebarFooter>
+            <ProfileDialog isOpen={openProfileDialog} setIsOpen={setOpenProfileDialog}/>
             <SidebarMenu>
                 <SidebarMenuItem>
                     <DropdownMenu>
@@ -88,7 +91,7 @@ export function DefaultSidebarFooter() {
                                 </div>
                             </DropdownMenuLabel>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem>
+                            <DropdownMenuItem onSelect={() => setOpenProfileDialog(true)}>
                                 <UserIcon />
                                 Conta
                             </DropdownMenuItem>
