@@ -253,7 +253,7 @@ export function OperatorsPage() {
                 </div>
                 
                 {/* Contador de Seleção (Desktop) */}
-                <div className="text-[10px] text-muted-foreground px-2">
+                <div className="text-xs text-muted-foreground px-2">
                     {table.getFilteredSelectedRowModel().rows.length} de{" "}
                     {table.getFilteredRowModel().rows.length} operador(es) selecionado(s).
                 </div>
