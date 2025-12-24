@@ -7,11 +7,15 @@ import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { CopyIcon, MoreHorizontalIcon, PlusIcon } from "lucide-react";
+import { CopyIcon, MoreHorizontalIcon, PlusIcon, TrashIcon } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { CILayout } from "../../components/layout";
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
 import { toast } from "sonner";
+import { useQuery } from "@tanstack/react-query";
+import { deleteOperator, getAllOperator } from "../../api";
+import { Spinner } from "@/components/ui/spinner";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 const columns: ColumnDef<Operator>[] = [
     {
@@ -54,7 +58,7 @@ const columns: ColumnDef<Operator>[] = [
                         <CopyIcon />
                     </Button>
                     <Button variant='link' className='p-0 flex items-center gap-2'>
-                        <Link to={`/ci/operator/edit/${row.getValue('id')}`} className='max-w-[7ch] truncate'>
+                        <Link to={`/ci/operator/edit/${row.getValue('id')}`} className='max-w-[16ch] truncate'>
                             {row.getValue('id')}
                         </Link>
                     </Button>
@@ -116,23 +120,19 @@ export function OperatorsPage() {
     const [rowSelection, setRowSelection] = useState({})
     const [filter, setFilter] = useState<string>('')
 
-    const data = useMemo(() => [{
-        active: true,
-        created_at: new Date(),
-        email: 'lucas.miranda.strapasson@gmail.com',
-        id: '6003a3e1-42ed-4e45-9b2c-05b44cf40772',
-        updated_at: new Date(),
-        username: 'root'
-    }], [])
+    const { data, isLoading, refetch } = useQuery({
+        queryFn: getAllOperator,
+        queryKey: ['lci', 'operators']
+    })
 
-    const filteredData = useMemo(() => data.filter(item => (
+    const filteredData = useMemo(() => data?.operators.filter(item => (
         item.id.toLowerCase().includes(filter.toLowerCase()) ||
         item.email.toLowerCase().includes(filter.toLowerCase()) ||
         item.username.toLowerCase().includes(filter.toLowerCase())
     )), [data, filter])
 
     const table = useReactTable({
-        data: filteredData,
+        data: filteredData || [],
         columns,
         getCoreRowModel: getCoreRowModel(),
         onRowSelectionChange: setRowSelection,
@@ -140,6 +140,21 @@ export function OperatorsPage() {
             rowSelection
         }
     })
+
+    async function handleDelete() {
+        if (!filteredData) return
+        const operators = Object.keys(rowSelection)
+        for (const operatorId of operators) {
+            try {
+                await deleteOperator(filteredData[Number(operatorId)].id);
+                toast.success('Operador deletado')
+            } catch (error) {
+                toast.error('Permissões insuficientes')
+            }
+        }
+        setRowSelection({})
+        refetch()
+    }
 
     return (
         <CILayout>
@@ -159,10 +174,20 @@ export function OperatorsPage() {
                             Novo operador
                         </Button>
                     </Link>
-                    <Button variant='outline' disabled={Object.keys(rowSelection).length == 0}>
-                        <MoreHorizontalIcon />
-                        Mais
-                    </Button>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant='outline' disabled={Object.keys(rowSelection).length == 0}>
+                                <MoreHorizontalIcon />
+                                Mais
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                            <DropdownMenuItem onClick={handleDelete}>
+                                <TrashIcon />
+                                Deletar
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 </div>
             </div>
             <Table>
@@ -188,34 +213,46 @@ export function OperatorsPage() {
                 </TableHeader>
                 <TableBody>
                     {
-                        table.getRowModel().rows?.length ? (
-                            table.getRowModel().rows.map(row => (
-                                <TableRow
-                                    key={row.id}
-                                    data-state={row.getIsSelected() && "selected"}
-                                >
-                                    {
-                                        row.getVisibleCells().map(cell => (
-                                            <TableCell
-                                                key={cell.id}
-                                            >
-                                                {
-                                                    flexRender(cell.column.columnDef.cell, cell.getContext())
-                                                }
-                                            </TableCell>
-                                        ))
-                                    }
-                                </TableRow>
-                            ))
-                        ) : (
+                        isLoading ? (
                             <TableRow>
                                 <TableCell
                                     colSpan={columns.length} className='h-24 text-center'
                                 >
-                                    Nenhum operador encontrado
+                                    <div className='flex items-center justify-center gap-2'>
+                                        <Spinner />
+                                        Carregando
+                                    </div>
                                 </TableCell>
                             </TableRow>
-                        )
+                        ) :
+                            table.getRowModel().rows?.length ? (
+                                table.getRowModel().rows.map(row => (
+                                    <TableRow
+                                        key={row.id}
+                                        data-state={row.getIsSelected() && "selected"}
+                                    >
+                                        {
+                                            row.getVisibleCells().map(cell => (
+                                                <TableCell
+                                                    key={cell.id}
+                                                >
+                                                    {
+                                                        flexRender(cell.column.columnDef.cell, cell.getContext())
+                                                    }
+                                                </TableCell>
+                                            ))
+                                        }
+                                    </TableRow>
+                                ))
+                            ) : (
+                                <TableRow>
+                                    <TableCell
+                                        colSpan={columns.length} className='h-24 text-center'
+                                    >
+                                        Nenhum operador encontrado
+                                    </TableCell>
+                                </TableRow>
+                            )
                     }
                 </TableBody>
             </Table>
