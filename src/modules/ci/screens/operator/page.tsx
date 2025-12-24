@@ -156,10 +156,10 @@ export function OperatorsPage() {
                 {/* Toolbar Responsiva */}
                 <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
                     <div className="relative w-full sm:max-w-sm">
-                        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                        {/* <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" /> */}
                         <Input
                             placeholder="Filtrar por nome, email ou ID..."
-                            className='pl-9 bg-white/5 border-white/10 focus-visible:ring-magenta-500 w-full'
+                            className='bg-white/5 border-white/10 focus-visible:ring-magenta-500 w-full'
                             value={filter}
                             onChange={event => setFilter(event.target.value)}
                         />
