@@ -4,6 +4,7 @@ import { Toaster } from "./components/ui/sonner";
 import { getAccessToken } from "./modules/ci/utils";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { CIRouterProtector } from "./modules/ci/components/router-protector";
+import { RunwayRouter } from "./modules/runway/router";
 
 export function App() {
 
@@ -18,6 +19,7 @@ export function App() {
             <BrowserRouter>
                 <CIRouterProtector>
                     <CIRouter />
+                    <RunwayRouter/>
                     <Toaster />
                 </CIRouterProtector>
             </BrowserRouter>
