@@ -1,0 +1,48 @@
+:root {
+  --lola-bg-layout: #f2f3f3;
+  --lola-text-main: #0f141a;
+}
+
+body.awsui-dark-mode,
+.awsui-dark-mode {
+  --lola-bg-layout: #0f141a;
+  --lola-text-main: #fbfbfb;
+  background-color: #0f141a !important;
+  color: #fbfbfb;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background-color: var(--lola-bg-layout);
+  color: var(--lola-text-main);
+}
+
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* AWS Console TopNavigation Searchbar alignment: left next to logo */
+.lola-top-navigation-header [class*="awsui_inputs_"] {
+  justify-content: flex-start !important;
+}
+
+/* Ensure button text never wraps into multiple lines in table actions */
+button, [class*="awsui_button"] {
+  white-space: nowrap !important;
+}
+
+/* Dark mode styling for AWS CloudWatch Log Events Viewer component */
+body.awsui-dark-mode .aws-log-events-viewer,
+.awsui-dark-mode .aws-log-events-viewer {
+  background-color: #0f172a !important;
+  border-color: #1e293b !important;
+  color: #f1f5f9 !important;
+}
+
